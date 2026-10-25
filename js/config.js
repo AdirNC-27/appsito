@@ -9,7 +9,7 @@ export const firebaseConfig = {
 };
 
 // 2) Clave PÚBLICA de notificaciones (la pondremos en el paso 3)
-export const VAPID_PUBLIC_KEY = 'PEGA_AQUI_LA_CLAVE_PUBLICA';
+export const VAPID_PUBLIC_KEY = 'BC9RG3qcE3N1MhPia6AtaeDHtQNrnwQ0FtdE7qQHrjRyFRWp6UfDXYhUeYfj4a5lLWHZWIhsLPLNrENoTvpGKeg';
 
 // 3) (Opcional) Calendario del iPhone
 export const ICS_URL = '';
