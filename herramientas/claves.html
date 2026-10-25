@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generar claves</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --bg:#EEF6FF; --card:#fff; --text:#0A2540; --muted:#48627D; --border:#D6E9FB; --accent:#0A6ED1; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#061727; --card:#0D2540; --text:#E6F4FF; --muted:#93B5D1; --border:#1A3A5C; --accent:#4FC3F7; } }
+  body { margin:0; background:var(--bg); color:var(--text); font-family: system-ui, -apple-system, sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:24px 16px 48px; display:flex; flex-direction:column; gap:16px; }
+  h1 { margin:0; font-size:24px; }
+  p { margin:0; line-height:1.5; color:var(--muted); }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+  label { font-weight:700; font-size:14px; }
+  textarea { width:100%; box-sizing:border-box; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); padding:10px; font:14px ui-monospace, monospace; min-height:64px; resize:vertical; }
+  button { min-height:48px; border-radius:14px; border:0; background:linear-gradient(140deg,#0757B8,#1C9BEF); color:#fff; font-weight:800; font-size:15px; padding:0 18px; cursor:pointer; }
+  .sec { background:transparent; border:1px solid var(--border); color:var(--text); min-height:40px; font-weight:700; }
+  .warn { background:#FEF3C7; color:#92400E; border-radius:12px; padding:10px 12px; font-size:14px; line-height:1.45; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Claves de notificaciones (VAPID)</h1>
+  <p>Estas dos claves permiten que tu robot de GitHub te mande notificaciones. Se generan <b>aquí mismo en tu navegador</b>; no se envían a ningún lado.</p>
+  <button id="gen">Generar claves</button>
+  <div class="card">
+    <label for="pub">Clave PÚBLICA → va en <code>js/config.js</code> y en el secreto <code>VAPID_PUBLIC_KEY</code></label>
+    <textarea id="pub" readonly></textarea>
+    <button class="sec" data-copy="pub">Copiar pública</button>
+  </div>
+  <div class="card">
+    <label for="priv">Clave PRIVADA → solo en el secreto <code>VAPID_PRIVATE_KEY</code> de GitHub</label>
+    <textarea id="priv" readonly></textarea>
+    <button class="sec" data-copy="priv">Copiar privada</button>
+    <div class="warn">No pegues la clave privada en ningún archivo del proyecto ni la compartas. Si la pierdes, genera unas nuevas y vuelve a activar las notificaciones en la app.</div>
+  </div>
+</main>
+<script>
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+document.getElementById('gen').addEventListener('click', async () => {
+  const kp = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, true, ['sign', 'verify']);
+  const raw = await crypto.subtle.exportKey('raw', kp.publicKey); // 65 bytes
+  const jwk = await crypto.subtle.exportKey('jwk', kp.privateKey);
+  document.getElementById('pub').value = b64u(raw);
+  document.getElementById('priv').value = jwk.d; // ya viene en base64url (32 bytes)
+});
+document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
+  const t = document.getElementById(b.dataset.copy);
+  if (!t.value) return;
+  try { await navigator.clipboard.writeText(t.value); b.textContent = '¡Copiada!'; } catch { t.select(); document.execCommand('copy'); b.textContent = '¡Copiada!'; }
+  setTimeout(() => (b.textContent = b.dataset.copy === 'pub' ? 'Copiar pública' : 'Copiar privada'), 1500);
+}));
+</script>
+</body>
+</html>

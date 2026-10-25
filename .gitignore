@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+*.log
+# Nunca subas la clave de la cuenta de servicio de Firebase
+*serviceAccount*.json
+*-firebase-adminsdk-*.json

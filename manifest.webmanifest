@@ -1,0 +1,17 @@
+{
+  "name": "Appsito",
+  "short_name": "Appsito",
+  "description": "Tus tareas, exámenes, horario y notas, con recordatorios.",
+  "lang": "es-PE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EEF6FF",
+  "theme_color": "#0B7BE0",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
